@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pelé Motorhome - Sua Casa Sobre Rodas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/bbd710cc-1d9e-4267-afb7-b33afda33821.png') no-repeat center center;
+            background-size: cover;
+        }
+        
+        .motorhome-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .motorhome-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .filter-section {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .modal {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .modal-open {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .modal-closed {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                    <i class="fas fa-caravan text-white text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">Pelé Motorhome</h1>
+            </div>
+            
+            <div class="hidden md:flex space-x-6">
+                <a href="#inicio" class="text-gray-700 hover:text-blue-600 font-medium">Início</a>
+                <a href="#veiculos" class="text-gray-700 hover:text-blue-600 font-medium">Veículos</a>
+                <a href="#sobre" class="text-gray-700 hover:text-blue-600 font-medium">Sobre</a>
+                <a href="#contato" class="text-gray-700 hover:text-blue-600 font-medium">Contato</a>
+            </div>
+            
+            <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-plus mr-2"></i>Anunciar
+            </button>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero-bg py-20 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-4xl md:text-6xl font-bold mb-6">Encontre Sua Casa Sobre Rodas</h2>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                Descubra os melhores motorhomes do Brasil com conforto, liberdade e aventura garantidos
+            </p>
+            <div class="bg-white rounded-lg p-6 max-w-2xl mx-auto shadow-2xl">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Marca</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700">
+                            <option>Todas as Marcas</option>
+                            <option>Winnebago</option>
+                            <option>Industreiler</option>
+                            <option>Santo Inácio</option>
+                            <option>Jayco</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Preço Máx.</label>
+                        <input type="number" placeholder="R$ 500.000" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700">
+                    </div>
+                    <div class="flex items-end">
+                        <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-search mr-2"></i>Buscar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vehicles Section -->
+    <section id="veiculos" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Motorhomes em Destaque</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    Explore nossa seleção premium de motorhomes com as melhores condições e preços do mercado
+                </p>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section rounded-lg p-6 mb-8 shadow-md">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Marca</label>
+                        <select id="filterMarca" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <option value="">Todas</option>
+                            <option>Winnebago</option>
+                            <option>Industreiler</option>
+                            <option>Santo Inácio</option>
+                            <option>Jayco</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Preço Máx.</label>
+                        <input type="number" id="filterPreco" placeholder="R$" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ano Mín.</label>
+                        <input type="number" id="filterAno" placeholder="2020" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="filtrarMotorhomes()" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                            <i class="fas fa-filter mr-2"></i>Filtrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicles Grid -->
+            <div id="motorhomesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Loading state -->
+                <div class="col-span-full text-center py-12">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-gray-600">Carregando motorhomes...</p>
+                </div>
+            </div>
+
+            <!-- Add Vehicle Button -->
+            <div class="text-center mt-12">
+                <button onclick="abrirModalAdicionar()" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors">
+                    <i class="fas fa-plus-circle mr-2"></i>Adicionar Motorhome
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="sobre" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/333ea387-d618-4a10-a6a0-05fe50fa4557.png" alt="Interior luxuoso de motorhome moderno com cozinha completa, área de estar e dormitório" class="rounded-lg shadow-xl w-full">
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Sobre a Pelé Motorhome</h2>
+                    <p class="text-gray-600 mb-4">
+                        Somos a maior plataforma especializada em motorhomes do Brasil, conectando amantes da estrada com seus veículos dos sonhos.
+                    </p>
+                    <p class="text-gray-600 mb-6">
+                        Com anos de experiência no mercado, oferecemos segurança, transparência e as melhores condições para compra e venda de motorhomes.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-600">500+</div>
+                            <div class="text-gray-600">Motorhomes Vendidos</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-600">98%</div>
+                            <div class="text-gray-600">Clientes Satisfeitos</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contato" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Entre em Contato</h2>
+                <p class="text-gray-600">Estamos aqui para ajudar você a encontrar o motorhome perfeito</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center p-6 bg-white rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-phone text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Telefone</h3>
+                    <p class="text-gray-600">(51) 98639-9999</p>
+                </div>
+                
+                <div class="text-center p-6 bg-white rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-envelope text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Email</h3>
+                    <p class="text-gray-600">contato@motorhomebrasil.com</p>
+                </div>
+                
+                <div class="text-center p-6 bg-white rounded-lg shadow-md">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-map-marker-alt text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Endereço</h3>
+                    <p class="text-gray-600">Santa Catarina - SC - Brasil</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Pelé Motorhome</h3>
+                    <p class="text-gray-300">Sua jornada para a liberdade começa aqui.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Links Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#inicio" class="text-gray-300 hover:text-white">Início</a></li>
+                        <li><a href="#veiculos" class="text-gray-300 hover:text-white">Veículos</a></li>
+                        <li><a href="#sobre" class="text-gray-300 hover:text-white">Sobre</a></li>
+                        <li><a href="#contato" class="text-gray-300 hover:text-white">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Redes Sociais</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Newsletter</h4>
+                    <div class="flex">
+                        <input type="email" placeholder="Seu email" class="px-3 py-2 bg-gray-700 text-white rounded-l-md focus:outline-none">
+                        <button class="bg-blue-600 px-4 py-2 rounded-r-md hover:bg-blue-700">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
+                <p>© 2024 Pelé Motorhome. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add/Edit Modal -->
+    <div id="motorhomeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal-closed">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800" id="modalTitle">Adicionar Motorhome</h3>
+                <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="motorhomeForm" class="space-y-4">
+                <input type="hidden" id="motorhomeId">
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Marca</label>
+                    <input type="text" id="marca" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Modelo</label>
+                    <input type="text" id="modelo" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Ano</label>
+                    <input type="number" id="ano" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Preço (R$)</label>
+                    <input type="number" id="preco" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                    <textarea id="descricao" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">URL da Imagem</label>
+                    <input type="url" id="imagemUrl" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div class="flex space-x-4 pt-4">
+                    <button type="button" onclick="fecharModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                        Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3000';
+        
+        // Estado da aplicação
+        let motorhomes = [];
+        let editingMotorhome = null;
+        
+        // Elementos DOM
+        const motorhomesGrid = document.getElementById('motorhomesGrid');
+        const modal = document.getElementById('motorhomeModal');
+        const form = document.getElementById('motorhomeForm');
+        const modalTitle = document.getElementById('modalTitle');
+        
+        // Funções de API
+        async function carregarMotorhomes() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/motorhomes`);
+                motorhomes = await response.json();
+                renderizarMotorhomes(motorhomes);
+            } catch (error) {
+                console.error('Erro ao carregar motorhomes:', error);
+                mostrarErro('Erro ao carregar motorhomes');
+            }
+        }
+        
+        async function filtrarMotorhomes() {
+            const marca = document.getElementById('filterMarca').value;
+            const preco = document.getElementById('filterPreco').value;
+            const ano = document.getElementById('filterAno').value;
+            
+            let url = `${API_BASE_URL}/motorhomes/search?`;
+            
+            if (marca) url += `marca=${marca}&`;
+            if (preco) url += `precoMax=${preco}&`;
+            if (ano) url += `anoMin=${ano}&`;
+            
+            try {
+                const response = await fetch(url);
+                const resultados = await response.json();
+                renderizarMotorhomes(resultados);
+            } catch (error) {
+                console.error('Erro ao filtrar motorhomes:', error);
+            }
+        }
+        
+        async function salvarMotorhome(dados) {
+            const url = dados._id ? `${API_BASE_URL}/motorhomes/${dados._id}` : `${API_BASE_URL}/motorhomes`;
+            const method = dados._id ? 'PUT' : 'POST';
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dados),
+                });
+                
+                if (response.ok) {
+                    carregarMotorhomes();
+                    fecharModal();
+                    mostrarSucesso(dados._id ? 'Motorhome atualizado!' : 'Motorhome adicionado!');
+                }
+            } catch (error) {
+                console.error('Erro ao salvar motorhome:', error);
+                mostrarErro('Erro ao salvar motorhome');
+            }
+        }
+        
+        async function deletarMotorhome(id) {
+            if (!confirm('Tem certeza que deseja deletar este motorhome?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/motorhomes/${id}`, {
+                    method: 'DELETE',
+                });
+                
+                if (response.ok) {
+                    carregarMotorhomes();
+                    mostrarSucesso('Motorhome deletado!');
+                }
+            } catch (error) {
+                console.error('Erro ao deletar motorhome:', error);
+                mostrarErro('Erro ao deletar motorhome');
+            }
+        }
+        
+        // Funções de UI
+        function renderizarMotorhomes(lista) {
+            if (lista.length === 0) {
+                motorhomesGrid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-search text-gray-400 text-6xl mb-4"></i>
+                        <h3 class="text-xl text-gray-600 mb-2">Nenhum motorhome encontrado</h3>
+                        <p class="text-gray-500">Tente ajustar seus filtros de busca</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            motorhomesGrid.innerHTML = lista.map(motorhome => `
+                <div class="motorhome-card bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="relative">
+                        <img src="${motorhome.imagemUrl || 'https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b7c3a281-2326-4953-a878-c244b5e3b041.png'}" 
+                             alt="${motorhome.marca} ${motorhome.modelo} ${motorhome.ano} - Motorhome com interior moderno e confortável" 
+                             class="w-full h-48 object-cover"
+                             onerror="this.src='https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6a2a3cfe-4501-4c96-bcb6-48c1ded4a2d3.png'">
+                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            R$ ${motorhome.preco.toLocaleString('pt-BR')}
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">${motorhome.marca} ${motorhome.modelo}</h3>
+                        <p class="text-gray-600 mb-4">Ano ${motorhome.ano}</p>
+                        
+                        <p class="text-gray-700 mb-6 line-clamp-3">${motorhome.descricao || 'Motorhome em excelente estado, pronto para aventuras.'}</p>
+                        
+                        <div class="flex space-x-2">
+                            <button onclick="editarMotorhome('${motorhome._id}')" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 text-sm">
+                                <i class="fas fa-edit mr-1"></i>Editar
+                            </button>
+                            <button onclick="deletarMotorhome('${motorhome._id}')" class="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 text-sm">
+                                <i class="fas fa-trash mr-1"></i>Excluir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function abrirModalAdicionar() {
+            editingMotorhome = null;
+            form.reset();
+            document.getElementById('motorhomeId').value = '';
+            modalTitle.textContent = 'Adicionar Motorhome';
+            modal.classList.remove('modal-closed');
+            modal.classList.add('modal-open');
+        }
+        
+        function editarMotorhome(id) {
+            const motorhome = motorhomes.find(m => m._id === id);
+            if (!motorhome) return;
+            
+            editingMotorhome = motorhome;
+            document.getElementById('motorhomeId').value = motorhome._id;
+            document.getElementById('marca').value = motorhome.marca;
+            document.getElementById('modelo').value = motorhome.modelo;
+            document.getElementById('ano').value = motorhome.ano;
+            document.getElementById('preco').value = motorhome.preco;
+            document.getElementById('descricao').value = motorhome.descricao || '';
+            document.getElementById('imagemUrl').value = motorhome.imagemUrl || '';
+            
+            modalTitle.textContent = 'Editar Motorhome';
+            modal.classList.remove('modal-closed');
+            modal.classList.add('modal-open');
+        }
+        
+        function fecharModal() {
+            modal.classList.remove('modal-open');
+            modal.classList.add('modal-closed');
+            editingMotorhome = null;
+        }
+        
+        function mostrarSucesso(mensagem) {
+            // Implementar toast de sucesso
+            alert(mensagem);
+        }
+        
+        function mostrarErro(mensagem) {
+            // Implementar toast de erro
+            alert('Erro: ' + mensagem);
+        }
+        
+        // Event Listeners
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const dados = {
+                marca: document.getElementById('marca').value,
+                modelo: document.getElementById('modelo').value,
+                ano: parseInt(document.getElementById('ano').value),
+                preco: parseFloat(document.getElementById('preco').value),
+                descricao: document.getElementById('descricao').value,
+                imagemUrl: document.getElementById('imagemUrl').value
+            };
+            
+            if (editingMotorhome) {
+                dados._id = editingMotorhome._id;
+            }
+            
+            await salvarMotorhome(dados);
+        });
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarMotorhomes();
+        });
+    </script>
+</body>
+</html>
+
